@@ -1,8 +1,16 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Editor } from "@tinymce/tinymce-react";
-import "../Tiny/Editor__Styles.css"
+import "../Tiny/Editor__Styles.css";
 
 export default function EditorComponent() {
+  const [initialValue, setInitialValue] = useState(undefined);
+  useEffect(() => {
+    // una aplicación real podría hacer una solicitud de búsqueda aquí para obtener el contenido
+    setTimeout(
+      () => setInitialValue("<p>BIENVENIDO, DIVIÉRTETE EDITANTO TESTS</p>"),
+      500
+    );
+  }, []);
   const editorRef = useRef(null);
   const log = () => {
     if (editorRef.current) {
@@ -15,13 +23,14 @@ export default function EditorComponent() {
 
   return (
     <section>
-    <h1>Hola Admin, vas a editar: "insertar test"</h1>
+      <h1>Hola Admin, vas a editar: "insertar test"</h1>
       <Editor
         apiKey="7v1e6x9jdvuh68elzfbx9y82ipi3g9akrjzhlh8kc0cx79gg"
         onInit={(evt, editor) => (editorRef.current = editor)}
-        // INVESTIGAR COMO VOLCAR LA INFO DE LOS TEST A LA CAJA DE TEXTO 
-        initialValue="<p>BIENVENIDO, DIVIÉRTETE EDITANTO TESTS</p>"
+        // INVESTIGAR COMO VOLCAR LA INFO DE LOS TEST A LA CAJA DE TEXTO
+        initialValue={initialValue}
         init={{
+          selector: "textarea",
           height: 900,
           editimage_cors_hosts: ["picsum.photos"],
           menubar: "file edit view insert format tools table help",
@@ -38,6 +47,9 @@ export default function EditorComponent() {
             "fullscreen",
             "help",
             "image",
+            "image", 
+            "imagetools",
+            "editimage",
             "importcss",
             "insertdatetime",
             "link",
@@ -56,8 +68,9 @@ export default function EditorComponent() {
             "wordcount",
           ],
           toolbar:
-            "undo redo | bold italic underline strikethrough | fontfamily fontsize blocks | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link anchor codesample | ltr rtl",
-          content_style: "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+            "undo redo | bold italic underline strikethrough | fontfamily fontsize blocks | alignleft aligncenter alignright alignjustify lineheight | outdent indent |  numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile quickimage media template link anchor codesample | ltr rtl",
+          content_style:
+            "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
           toolbar_sticky: false,
           toolbar_sticky_offset: isSmallScreen ? 102 : 108,
           autosave_ask_before_unload: true,
@@ -67,9 +80,9 @@ export default function EditorComponent() {
           autosave_retention: "2m",
           image_advtab: true,
           save_enablewhendirty: false,
-//           save_onsavecallback: () => {
-//     console.log('Saved');
-//   },
+          save_onsavecallback: () => {
+            console.log("Saved");
+          },
           link_list: [
             { title: "My página 1", value: "https://www.uniformeazul.com" },
             { title: "My pagina 2", value: "http://www.moxiecode.com" },
@@ -87,12 +100,16 @@ export default function EditorComponent() {
           file_picker_callback: (callback, value, meta) => {
             /* Provide file and text for the link dialog */
             if (meta.filetype === "file") {
-              callback("https://www.google.com/logos/google.jpg", { text: "My text" });
+              callback("https://www.google.com/logos/google.jpg", {
+                text: "My text",
+              });
             }
 
             /* Provide image and alt text for the image dialog */
             if (meta.filetype === "image") {
-              callback("https://www.google.com/logos/google.jpg", { alt: "My alt text" });
+              callback("https://www.google.com/logos/google.jpg", {
+                alt: "My alt text",
+              });
             }
 
             /* Provide alternative source and posted for the media dialog */
@@ -134,13 +151,15 @@ export default function EditorComponent() {
           content_css: useDarkMode ? "dark" : "default",
           //   content_style: "body { font-family:Helvetica,Arial,sans-serif; font-size:16px }",
         }}
-
       />
 
       {/* Necesitamos ver qué es y para qué  funciona el useRef -- lineas 6-11. Y darle la funncionalidad de guardar cambios. */}
-      <button className="btn1" onClick={log}>Log editor content</button>
-      <button className="btn2" onClick={log}>Guardar cambios</button>
-
+      <button className="btn1" onClick={log}>
+        Log editor content
+      </button>
+      <button className="btn2" onClick={log}>
+        Guardar cambios
+      </button>
     </section>
   );
 }
